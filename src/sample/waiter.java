@@ -1,21 +1,22 @@
 package sample;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class waiter extends Server implements Runnable {
     private static Socket client = new Socket();
     private static OutputStream out;
     private static FileInputStream fin;
     private DataOutputStream dout;
-    private ServerSocket soc = null;
     private int counter = 0;
 
-    public void scanList()
+    waiter(Socket clientSoc)
     {
+        client = clientSoc;
+    }
+
+    public void scanList() {
         // The name of the file to open.
         String fileName = "list.txt";
 
@@ -78,16 +79,19 @@ public class waiter extends Server implements Runnable {
 
     }
 
-    public void sendList() throws IOException {
+    public void sendList() {
         LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
         for(int i = 0; i < counter; i++)
         {
-            dout.writeUTF(tmpMusicList.getFirst().getName());
+            try {
+                dout.writeUTF(tmpMusicList.getFirst().getName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             tmpMusicList.removeFirst();
         }
     }
-    public void sendMusic()
-    {
+    public void sendMusic() {
         LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
         for(int i = 0; i < counter; i++)
         {
@@ -150,9 +154,7 @@ public class waiter extends Server implements Runnable {
             System.out.println("size: " + datas + "kb");
         }
     }
-
-    public void sendMusic(int id)
-    {
+    public void sendMusic(int id) {
         LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
         for(int i = 0; i < counter; i++)
         {
@@ -224,9 +226,7 @@ public class waiter extends Server implements Runnable {
             }
         }
     }
-
-    int waitMediaID()
-    {
+    int waitMediaID() {
         InputStream in;
         DataInputStream din;
         int ID = -1;
@@ -244,18 +244,6 @@ public class waiter extends Server implements Runnable {
     @Override
     public void run() {
 
-        try {
-            soc = new ServerSocket(11111);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Server started !");
-        try {
-            client = soc.accept();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Client connected !");
         this.scanList();
 
         try {
@@ -263,6 +251,7 @@ public class waiter extends Server implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         dout = new DataOutputStream(out);
         try {
             dout.writeInt(counter);
@@ -270,11 +259,7 @@ public class waiter extends Server implements Runnable {
             e.printStackTrace();
         }
 
-        try {
-            sendList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.sendList();
 
         int id = waitMediaID();
         if(id == -1)
