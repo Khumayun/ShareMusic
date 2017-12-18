@@ -2,6 +2,7 @@ package sample;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class waiter extends Server implements Runnable {
@@ -15,7 +16,6 @@ public class waiter extends Server implements Runnable {
     {
         client = clientSoc;
     }
-
     public void scanList() {
         // The name of the file to open.
         String fileName = "list.txt";
@@ -78,25 +78,25 @@ public class waiter extends Server implements Runnable {
         }
 
     }
-
     public void sendList() {
-        LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
-        for(int i = 0; i < counter; i++)
+        Iterator<MediaFile> iterator = myMusicList.iterator();
+        while (iterator.hasNext())
         {
             try {
-                dout.writeUTF(tmpMusicList.getFirst().getName());
+                dout.writeUTF(iterator.next().getName());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            tmpMusicList.removeFirst();
         }
     }
     public void sendMusic() {
-        LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
-        for(int i = 0; i < counter; i++)
+        Iterator<MediaFile> iterator = myMusicList.iterator();
+        MediaFile tmpMediaIterator = null;
+        while(iterator.hasNext())
         {
+            tmpMediaIterator = iterator.next();
             try {
-                fin = new FileInputStream(new File(tmpMusicList.getFirst().getPath()));
+                fin = new FileInputStream(new File(tmpMediaIterator.getPath()));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -119,8 +119,8 @@ public class waiter extends Server implements Runnable {
                 e.printStackTrace();
             }
             try {
-                fin = new FileInputStream(tmpMusicList.getFirst().getPath());
-                System.out.println(tmpMusicList.getFirst().getPath());
+                fin = new FileInputStream(tmpMediaIterator.getPath());
+                System.out.println(tmpMediaIterator.getPath());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -130,8 +130,7 @@ public class waiter extends Server implements Runnable {
                 e.printStackTrace();
             }
             try {
-                dout.writeUTF(tmpMusicList.getFirst().getName());
-                if(!tmpMusicList.isEmpty()) tmpMusicList.removeFirst();
+                dout.writeUTF(tmpMediaIterator.getName());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -155,17 +154,9 @@ public class waiter extends Server implements Runnable {
         }
     }
     public void sendMusic(int id) {
-        LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
-        for(int i = 0; i < counter; i++)
-        {
-            if(i < id)
-            {
-                if(!tmpMusicList.isEmpty()) tmpMusicList.removeFirst();
-                continue;
-            }else
-            {
+        MediaFile the_file = myMusicList.get(id);
                 try {
-                    fin = new FileInputStream(new File(tmpMusicList.getFirst().getPath()));
+                    fin = new FileInputStream(new File(the_file.getPath()));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -188,8 +179,8 @@ public class waiter extends Server implements Runnable {
                     e.printStackTrace();
                 }
                 try {
-                    fin = new FileInputStream(tmpMusicList.getFirst().getPath());
-                    System.out.println(tmpMusicList.getFirst().getPath());
+                    fin = new FileInputStream(the_file.getPath());
+                    System.out.println(the_file.getPath());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -199,9 +190,7 @@ public class waiter extends Server implements Runnable {
                     e.printStackTrace();
                 }
                 try {
-                    dout.writeUTF(tmpMusicList.getFirst().getName());
-                    if(!myMusicList.isEmpty()) tmpMusicList.removeFirst();
-                    i = counter; //break
+                    dout.writeUTF(the_file.getName());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -222,10 +211,8 @@ public class waiter extends Server implements Runnable {
                     }
                 }
                 System.out.println("size: " + datas + "kb");
-
-            }
         }
-    }
+
     int waitMediaID() {
         InputStream in;
         DataInputStream din;
