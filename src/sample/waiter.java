@@ -2,6 +2,7 @@ package sample;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
 
 public class waiter extends Server implements Runnable {
@@ -15,7 +16,6 @@ public class waiter extends Server implements Runnable {
     {
         client = clientSoc;
     }
-
     private void scanList() {
         // The name of the file to open.
         String fileName = "list.txt";
@@ -65,12 +65,11 @@ public class waiter extends Server implements Runnable {
                     }
                 }
             } catch (IOException ex) {
-                 ex.printStackTrace();
+                ex.printStackTrace();
             }
         }
 
     }
-
     private void sendList() {
         LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
         for(int i = 0; i < counter; i++)
@@ -232,6 +231,7 @@ public class waiter extends Server implements Runnable {
         }
         return ID;
     }
+    private boolean isClientAvailable(){return false;}
 
     @Override
     public void run() {
@@ -252,13 +252,12 @@ public class waiter extends Server implements Runnable {
         }
 
         this.sendList();
-
-        while(true)
+        while(client.isClosed())
         {
             try
             {
                 int id = waitMediaID();
-                if(id == -1)
+                if(id == -2)
                     sendMusic();
                 else
                     sendMusic(id);
@@ -267,5 +266,6 @@ public class waiter extends Server implements Runnable {
                 exc.printStackTrace();
             }
         }
+        //exit thread
     }
 }

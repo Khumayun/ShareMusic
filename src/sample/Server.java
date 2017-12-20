@@ -4,18 +4,17 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.Vector;
 
 public class Server {
 
     private static int clientCounter = 0;
     protected LinkedList<MediaFile> myMusicList = new LinkedList<>();
     protected ServerSocket soc = null;
+    static Vector<waiter> ar = new Vector<waiter>();
 
     public void startServer() throws Exception
     {
-
         try {
             soc = new ServerSocket(11111);
         } catch (IOException e) {
@@ -39,7 +38,9 @@ public class Server {
 
                     System.out.println("Client connected !");
                     clientCounter++;
-                    Thread talkWithClient = new Thread(new waiter(client));
+                    waiter clientManger = new waiter(client);
+                    Thread talkWithClient = new Thread(clientManger);
+                    ar.add(clientManger);
                     talkWithClient.start();
                 }
             }
