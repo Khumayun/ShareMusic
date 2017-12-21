@@ -2,7 +2,6 @@ package sample;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.LinkedList;
 
 public class waiter extends Server implements Runnable {
@@ -10,66 +9,13 @@ public class waiter extends Server implements Runnable {
     private static OutputStream out;
     private static FileInputStream fin;
     private DataOutputStream dout;
-    private int counter = 0;
 
     waiter(Socket clientSoc)
     {
         client = clientSoc;
     }
-    private void scanList() {
-        // The name of the file to open.
-        String fileName = "list.txt";
-
-        // This will reference one line at a time
-        String line;
-        boolean exist = false;
-
-        while (!exist)
-        {
-            try {
-                // FileReader reads text files in the default encoding.
-                FileReader fileReader =
-                        new FileReader(fileName);
-
-                // Always wrap FileReader in BufferedReader.
-                BufferedReader bufferedReader =
-                        new BufferedReader(fileReader);
 
 
-                while ((line = bufferedReader.readLine()) != null) {
-                    MediaFile tmp = new MediaFile();
-
-                    exist = true;
-                    tmp.setPath(line);
-                    tmp.setName(line.substring(line.lastIndexOf('\\') + 1, line.length()));
-                    myMusicList.addLast(tmp);
-                    counter++;
-                }
-
-                // Always close files.
-                bufferedReader.close();
-            } catch (FileNotFoundException ex) {
-
-                Writer writer = null;
-
-                try {
-                    writer = new BufferedWriter(new OutputStreamWriter(
-                            new FileOutputStream("list.txt"), "utf-8"));
-                } catch (IOException exc) {
-                    exc.printStackTrace();
-                } finally {
-                    try {
-                        writer.close();
-                    } catch (Exception exc) {
-                        //
-                    }
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-    }
     private void sendList() {
         LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) myMusicList.clone();
         for(int i = 0; i < counter; i++)
@@ -231,7 +177,6 @@ public class waiter extends Server implements Runnable {
         }
         return ID;
     }
-    private boolean isClientAvailable(){return false;}
 
     @Override
     public void run() {
@@ -252,7 +197,7 @@ public class waiter extends Server implements Runnable {
         }
 
         this.sendList();
-        while(client.isClosed())
+        while(!client.isClosed())
         {
             try
             {

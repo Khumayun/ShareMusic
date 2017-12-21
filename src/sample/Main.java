@@ -17,18 +17,21 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
 
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
+        Server me = new Server();
+        me.startServer();
+        me.scanList();
+
+        
+        Parent root = FXMLLoader.load(getClass().getResource("user.fxml"));
+
+        primaryStage.setTitle("ShareMusic");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        Server me = new Server();
-        me.startServer();
 
     }
 
     public static void main(String[] args) throws Exception {
-
         launch(args);
     }
 }
