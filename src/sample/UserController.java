@@ -83,7 +83,6 @@ public class UserController extends Server {
             userItemIndex++;
             userList.setItems(userItems);
         }
-
         tmpMusicList.clear();
 
     }

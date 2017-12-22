@@ -16,7 +16,7 @@ public class Server {
     protected static LinkedList<MediaFile> myMusicList = null;
     protected ServerSocket soc = null;
     protected static Vector<waiter> ar = new Vector<waiter>();
-    protected static int counter = 0;
+    protected int counter = 0;
 
 
 

@@ -1,33 +1,18 @@
 package sample;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.stage.FileChooser;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import javafx.event.ActionEvent;
-import javafx.stage.Stage;
-
-import java.io.*;
-import java.util.Vector;
 
 
-public class ServerController extends Server {
+public class ServerController extends Client_process {
 
     public Button downloadSelected, downloadAll, refreshList;
     public ListView<String> serverList;
     ObservableList<String> serverItems = FXCollections.observableArrayList();
-    LinkedList<MediaFile> tmpMusicList;
-    int serverItemIndex = 0;
+    int clientItemIndex = 0;
 
 
     public void handleDownloadSelected()
@@ -38,7 +23,9 @@ public class ServerController extends Server {
         tmpIndex = serverList.getSelectionModel().getSelectedIndex();
         System.out.println("item " + tmpItem);
         System.out.println("index " + tmpIndex);
-        System.out.println("index " + tmpIndex);
+
+        getMusic(tmpIndex);
+
     }
 
     public void handleDownloadAll()
@@ -48,6 +35,16 @@ public class ServerController extends Server {
 
     public void handleRefreshList()
     {
+        serverItems.clear();
+        LinkedList<MediaFile> tmpMusicList = (LinkedList<MediaFile>) recievedMusicList.clone();
+
+        while (!tmpMusicList.isEmpty()) {
+            serverItems.add(tmpMusicList.getLast().getIndex(), tmpMusicList.getLast().getName());
+            tmpMusicList.removeLast();
+            clientItemIndex++;
+            serverList.setItems(serverItems);
+        }
+
         System.out.println("In Refresh List!!!");
     }
 

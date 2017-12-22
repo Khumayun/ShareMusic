@@ -181,7 +181,7 @@ public class waiter extends Server implements Runnable {
     @Override
     public void run() {
 
-        this.scanList();
+        scanList();
 
         try {
             out = client.getOutputStream();
