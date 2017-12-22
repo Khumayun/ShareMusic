@@ -3,6 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,7 +17,7 @@ public class Server {
     protected static LinkedList<MediaFile> myMusicList = null;
     protected ServerSocket soc = null;
     protected static Vector<waiter> ar = new Vector<waiter>();
-    protected int counter = 0;
+    protected static int counter = 0;
 
 
 
@@ -57,6 +58,66 @@ public class Server {
 
     }
 
+    public void initScanList() {
+        // The name of the file to open.
+        String fileName = "list.txt";
+
+        // This will reference one line at a time
+        String line;
+        boolean exist = false;
+        myMusicList = new LinkedList<>();
+
+        while (!exist)
+        {
+            try {
+                // FileReader reads text files in the default encoding.
+                FileReader fileReader =
+                        new FileReader(fileName);
+
+                // Always wrap FileReader in BufferedReader.
+                BufferedReader bufferedReader =
+                        new BufferedReader(fileReader);
+
+                /*if ((bufferedReader.readLine()) == null) {
+                    exist = true;
+                    break;
+                }*/
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    MediaFile tmp = new MediaFile();
+
+                    exist = true;
+                    tmp.setPath(line);
+                    tmp.setName(line.substring(line.lastIndexOf('\\') + 1, line.length()));
+                    tmp.setIndex(counter);
+                    myMusicList.addLast(tmp);
+                    counter++;
+                }
+
+                // Always close files.
+                bufferedReader.close();
+            } catch (FileNotFoundException ex) {
+
+                Writer writer = null;
+
+                try {
+                    writer = new BufferedWriter(new OutputStreamWriter(
+                            new FileOutputStream("list.txt"), "utf-8"));
+                } catch (IOException exc) {
+                    exc.printStackTrace();
+                } finally {
+                    try {
+                        writer.close();
+                    } catch (Exception exc) {
+                        //
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
     public void scanList() {
         // The name of the file to open.
         String fileName = "list.txt";
@@ -77,6 +138,8 @@ public class Server {
                 BufferedReader bufferedReader =
                         new BufferedReader(fileReader);
 
+                if ((bufferedReader.readLine()) == null)
+                    break;
 
                 while ((line = bufferedReader.readLine()) != null) {
                     MediaFile tmp = new MediaFile();
@@ -131,6 +194,7 @@ public class Server {
             try {
                 writer = new BufferedWriter(new FileWriter("list.txt", true));
                 BufferedReader br = new BufferedReader(new FileReader("list.txt"));
+
                 if (br.readLine() != null) {
                     writer.append('\n');
                 }
@@ -139,7 +203,10 @@ public class Server {
                 MediaFile tmpMediaFile = new MediaFile();
                 tmpMediaFile.setPath(e.getAbsolutePath());
                 tmpMediaFile.setName(e.getAbsolutePath().substring(e.getAbsolutePath().lastIndexOf('\\') + 1, e.getAbsolutePath().length()));
-                tmpMediaFile.setIndex(myMusicList.getLast().getIndex() + 1);
+                if(myMusicList.isEmpty())
+                    tmpMediaFile.setIndex(0);
+                else
+                    tmpMediaFile.setIndex(myMusicList.getLast().getIndex() + 1);
                 myMusicList.addLast(tmpMediaFile);
             } catch (IOException exc) {
                 // report

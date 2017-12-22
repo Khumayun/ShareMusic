@@ -21,7 +21,7 @@ public class Client {
     private static int Oct_one = 192;
     private static int Oct_two = 168;
     private static int Oct_three = 0;
-    private static int Oct_four = 1;
+    private static int Oct_four = 12;
     InetAddress ipAddr = null;
 
     Client() {

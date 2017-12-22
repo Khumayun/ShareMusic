@@ -36,7 +36,7 @@
                <buttons>
                   <Button fx:id="share" mnemonicParsing="false" onAction="#handleShareClick" text="Share Music" />
                   <Button fx:id="refresh" mnemonicParsing="false" onAction="#handleRefreshMusic" text="Refresh Music" />
-                  <Button mnemonicParsing="false" text="Delete All" />
+                  <Button fx:id="delete" mnemonicParsing="false" onAction="#handleDeleteClick" text="Delete All" />
                </buttons>
             </ButtonBar>
          </children>

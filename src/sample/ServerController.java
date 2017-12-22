@@ -1,10 +1,13 @@
 package sample;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.LinkedList;
+import java.util.Optional;
 
 
 public class ServerController extends Client_process {
@@ -30,7 +33,16 @@ public class ServerController extends Client_process {
 
     public void handleDownloadAll()
     {
-        System.out.println("In Download All!!!");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Download All");
+        alert.setHeaderText("Are you sure to download all?");
+        alert.setContentText("Press OK to download all.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)  {
+            getMusic(-2);
+        }
+
     }
 
     public void handleRefreshList()
@@ -45,7 +57,6 @@ public class ServerController extends Client_process {
             serverList.setItems(serverItems);
         }
 
-        System.out.println("In Refresh List!!!");
     }
 
 }
